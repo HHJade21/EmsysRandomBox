@@ -14,8 +14,28 @@ public enum SFXType
     Walk = 1,
 }
 
-public class AudioManager : Singleton<AudioManager>
+public class AudioManager : MonoBehaviour
 {
+    public static AudioManager instance
+    { 
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<AudioManager>();
+                if (instance == null)
+                {
+                    GameObject container = new GameObject("AudioManager");
+                    instance = container.AddComponent<AudioManager>();
+                }
+            }
+            return instance;
+        }
+        set
+        {
+            instance = value;
+        }
+    }
     [SerializeField] private AudioSource bgmSource;
     [SerializeField] private AudioClip[] bgmClips;
     [SerializeField] private BGMType currentBGMClip = BGMType.None;
