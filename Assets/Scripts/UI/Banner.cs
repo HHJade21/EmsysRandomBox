@@ -16,6 +16,7 @@ public class Banner : MonoBehaviour
     private Image image;
     private void Start()
     {
+        image = this.GetComponent<Image>();
         InvokeRepeating("BannerTimer", 0, bannertimer);
     }
 
