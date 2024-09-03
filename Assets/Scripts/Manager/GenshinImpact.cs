@@ -30,6 +30,8 @@ namespace codingchildren
             keyframe = transform.GetChild(2);
             keyframe2 = transform.GetChild(3);
             light = transform.GetChild(0).GetComponentInChildren<Light>();
+            particle = transform.GetChild(0).GetComponentInChildren<ParticleSystem>();
+            particle.Stop();
             initCamPos = camera.transform.position;
             initCamRot = camera.transform.eulerAngles;
 
@@ -45,6 +47,7 @@ namespace codingchildren
 
             target.position = initTargetPos;
             target.eulerAngles = initTargetRot;
+            particle.Stop();
             isTriggered = false;
             isEntered = false;
         }
@@ -63,6 +66,7 @@ namespace codingchildren
         [ContextMenu("이히히")]
         public void Trigger()
         {
+            particle.Play();
             isTriggered = true;
         }
         private void Awake()
