@@ -8,8 +8,8 @@ namespace codingchildren
     {
         #region props
         private Transform camera;
-        private Light light1;
-        private Light light2;
+        private ParticleSystem particle;
+        private Light light;
         private Transform target;
         private Transform keyframe;
         private Transform keyframe2;
@@ -27,10 +27,9 @@ namespace codingchildren
         {
             target = transform.GetChild(0);
             camera = transform.GetChild(1);
-            light1 = transform.GetChild(0).GetChild(0).GetComponent<Light>();
-            light2 = transform.GetChild(0).GetChild(1).GetComponent<Light>();
             keyframe = transform.GetChild(2);
             keyframe2 = transform.GetChild(3);
+            light = transform.GetChild(0).GetComponentInChildren<Light>();
             initCamPos = camera.transform.position;
             initCamRot = camera.transform.eulerAngles;
 
@@ -46,12 +45,6 @@ namespace codingchildren
 
             target.position = initTargetPos;
             target.eulerAngles = initTargetRot;
-
-            light1.intensity = 5;
-            light1.range = 10;
-            light2.intensity = 0.001f;
-            light2.range = 0.001f;
-
             isTriggered = false;
             isEntered = false;
         }
@@ -82,8 +75,6 @@ namespace codingchildren
             if (Vector3.Distance(keyframe.position, target.position) < 0.2f)
             {
                 target.LookAt(keyframe2);
-                light1.intensity = 0;
-                light1.range = 0;
                 if (!isEntered)
                 {
                     StartCoroutine(LightOnCoroutine());
@@ -101,20 +92,6 @@ namespace codingchildren
                 target.position += dest.normalized * 100 * Time.deltaTime;
             }
             return;
-            if (Input.GetKey(KeyCode.Alpha1))
-            {
-                target.transform.position += dest.normalized * 100 * Time.deltaTime;
-                Debug.Log("키 눌림");
-            }
-            if (Input.GetKey(KeyCode.Alpha2))
-            {
-                target.transform.position += dest2.normalized * 100 * Time.deltaTime;
-                Debug.Log("키 눌림");
-            }
-        }
-        private void LightOn()
-        {
-            StartCoroutine(LightOnCoroutine());
         }
         private IEnumerator LightOnCoroutine()
         {
@@ -122,8 +99,8 @@ namespace codingchildren
             while (t < 1)
             {
                 t += Time.deltaTime;
-                light2.intensity = Mathf.Lerp(5, 30, t);
-                light2.range = Mathf.Lerp(10, 30, t);
+                light.intensity = Mathf.Lerp(5, 30, t);
+                light.range = Mathf.Lerp(10, 30, t);
                 yield return null;
             }
         }
