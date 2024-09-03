@@ -8,8 +8,8 @@ namespace codingchildren
     {
         #region props
         private Transform camera;
-        private Camera cam1;
-        private Camera cam2;
+        private Light light1;
+        private Light light2;
         private Transform target;
         private Transform keyframe;
         private Transform keyframe2;
@@ -27,8 +27,8 @@ namespace codingchildren
         {
             target = transform.GetChild(0);
             camera = transform.GetChild(1);
-            cam1 = camera.GetComponent<Camera>();
-            cam2 = transform.GetChild(0).GetComponentInChildren<Camera>();
+            light1 = transform.GetChild(0).GetChild(0).GetComponent<Light>();
+            light2 = transform.GetChild(0).GetChild(1).GetComponent<Light>();
             keyframe = transform.GetChild(2);
             keyframe2 = transform.GetChild(3);
             initCamPos = camera.transform.position;
@@ -46,6 +46,11 @@ namespace codingchildren
 
             target.position = initTargetPos;
             target.eulerAngles = initTargetRot;
+
+            light1.intensity = 5;
+            light1.range = 10;
+            light2.intensity = 0.001f;
+            light2.range = 0.001f;
 
             isTriggered = false;
             isEntered = false;
@@ -76,14 +81,19 @@ namespace codingchildren
         {
             if (Vector3.Distance(keyframe.position, target.position) < 0.2f)
             {
-                isEntered = true;
                 target.LookAt(keyframe2);
-                Invoke("CameraSwitch", 2f);
+                light1.intensity = 0;
+                light1.range = 0;
+                if (!isEntered)
+                {
+                    StartCoroutine(LightOnCoroutine());
+                }
+                isEntered = true;
             }
             if (isEntered)
             {
                 camera.LookAt(target);
-                target.position += target.forward * 50 * Time.deltaTime;
+                target.position += target.forward * 30 * Time.deltaTime;
                 return;
             }
             if (isTriggered)
@@ -102,10 +112,20 @@ namespace codingchildren
                 Debug.Log("키 눌림");
             }
         }
-        private void CameraSwitch()
+        private void LightOn()
         {
-            cam1.enabled = !cam1.enabled;
-            cam2.enabled = !cam2.enabled;
+            StartCoroutine(LightOnCoroutine());
+        }
+        private IEnumerator LightOnCoroutine()
+        {
+            float t = 0;
+            while (t < 1)
+            {
+                t += Time.deltaTime;
+                light2.intensity = Mathf.Lerp(5, 30, t);
+                light2.range = Mathf.Lerp(10, 30, t);
+                yield return null;
+            }
         }
     }
 }
